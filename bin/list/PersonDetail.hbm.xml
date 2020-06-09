@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jun 7, 2020, 5:54:36 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+ <class name="list.PersonDetail" table="PERSONDETAIL">
+  <id access="field" name="p_id" type="int">
+   <column name="P_ID"/>
+   <generator class="identity"/>
+  </id>
+  <property generated="never" lazy="false" name="lastname" type="java.lang.String">
+   <column name="LASTNAME"/>
+  </property>
+  <property generated="never" lazy="false" name="firstname" type="java.lang.String">
+   <column name="FIRSTNAME"/>
+  </property>
+  <property generated="never" lazy="false" name="middlename" type="java.lang.String">
+   <column name="MIDDLENAME"/>
+  </property>
+  <property generated="never" lazy="false" name="age" type="int">
+   <column name="AGE"/>
+  </property>
+  <list cascade="all" name="barangays" table="BARANGAY">
+   <key>
+    <column name="P_ID"/>
+   </key>
+   <list-index base="0">
+    <column name="idx"/>
+   </list-index>
+   <one-to-many class="list.barangay"/>
+  </list>
+ </class>
+</hibernate-mapping>

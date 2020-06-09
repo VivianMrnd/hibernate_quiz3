@@ -1,0 +1,418 @@
+package annotation.criteria;
+
+import java.util.Scanner;
+
+import java.util.List; 
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.transform.Transformers;
+
+import annotation.entity.PersonDetail;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.LogicalExpression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+public class main {
+	static Scanner input = new Scanner(System.in);
+	static PersonDetail p= new PersonDetail();
+
+	public static void main(String[] args) {
+
+		System.out.println("Choose any of the following below: ");
+		System.out.println("[1]-INSERT\n[2]-SELECT\n[3]-MODIFY");
+		System.out.print("Enter number: ");
+		int ch = input.nextInt();
+
+		switch(ch) {
+
+		case 1: 
+
+			PersonDetail pd = new PersonDetail();
+			Session session = dbutil.getSession();
+			Transaction tx = null;
+
+			System.out.println("Please enter the following details: ");
+			System.out.print("Lastname: ");
+			String lname = input.next();
+			System.out.print("Firstname: ");
+			String fname = input.next();
+			System.out.print("Middlename: ");
+			String mname = input.next();
+			System.out.print("Age: ");
+			int age = input.nextInt();
+
+			int addnames = lname.length() + mname.length();
+			int addnames1 = fname.length()+lname.length() + mname.length();
+			System.out.println("lastname and middlename length: " + addnames);
+			System.out.println("LMF length: " + addnames1);
+
+			if(pd.fibs(age)%2 == 0) {
+				try {
+
+					tx = session.beginTransaction();
+
+					pd.setLastname(lname);
+					pd.setFirstname(fname);
+					pd.setMiddlename(mname);
+					pd.AgeCheck(age);
+					pd.setAge(age);
+
+					Integer id = (Integer) session.save(pd);
+
+					int fib[] = new int[age];
+					fib[0] = 0;
+					fib[1] = 1;
+
+					for (int i = 2; i < age; i++) {
+						fib[i] = fib[i - 1] + fib[i - 2];
+					}
+
+					pd.check(fib, addnames, addnames1);
+					tx.commit();
+					System.out.println("Your Id: " + id);
+					System.out.println("---------------Details added-------------------");
+				} catch (Exception ex) {
+
+					if (tx != null) {
+						tx.rollback();
+					}
+
+					ex.printStackTrace();
+				} finally {
+					session.close();
+				}
+				System.out.println("---System closed---");
+				System.exit(0);
+			}
+			else {
+
+				try {
+
+					tx = session.beginTransaction();
+
+					pd.setLastname(lname);
+					pd.setFirstname(fname);
+					pd.setMiddlename(mname);
+					pd.AgeCheck(age);
+					pd.setAge(age);
+
+					int fib[] = new int[age];
+					fib[0] = 0;
+					fib[1] = 1;
+
+					for (int i = 2; i < age; i++) {
+						fib[i] = fib[i - 1] + fib[i - 2];
+					}
+
+					Integer id = (Integer) session.save(pd);
+					pd.check(fib, addnames, addnames1);
+
+					System.out.println("Your Id: " + id);
+					System.out.println("---------------Details added-------------------");
+				} catch (Exception ex) {
+
+					if (tx != null) {
+						tx.rollback();
+					}
+					ex.printStackTrace();
+
+				} finally {
+					session.close();
+				}
+
+				System.out.println("---System closed---");
+				System.exit(0);
+			}
+			break;
+
+		case 2: 	
+
+			Session session1 = dbutil.getSession();
+
+			System.out.println("Please enter the following details: ");
+			System.out.print("ID: ");
+			int id = input.nextInt();
+			System.out.print("Lastname: ");
+			String last = input.next();
+
+			try {
+
+				Criteria cr = session1.createCriteria(PersonDetail.class);
+
+				Criterion lastn= Restrictions.ilike("lastname", last);
+				Criterion p_id = Restrictions.eq("p_id", id);
+				LogicalExpression orExp = Restrictions.or(lastn, p_id);
+			
+				cr.add(orExp);
+
+				cr.setFirstResult(2);
+				cr.setMaxResults(10);
+
+				cr.addOrder(Order.desc("p_id"));
+				cr.addOrder(Order.asc("p_id"));
+
+				StringBuilder sb = new StringBuilder();
+
+				if(p.getMiddlename()==null) {
+
+
+					sb =new StringBuilder (p.getLastname());
+					String lastname_1 = "" + sb.reverse();
+					sb =new StringBuilder (p.getFirstname());
+					String fname_1 = "" + sb.reverse();
+					String number_1 = String.valueOf(p.getAge() );
+
+					String xx1 = "";
+					for(int i = number_1.length() - 1; i >= 0; i--) {
+						xx1 = xx1 + number_1.charAt(i);
+					}
+					System.out.println("Reversing details....");
+					Thread.sleep(2000);
+					System.out.println();
+
+
+					List<PersonDetail> personList = cr.list();
+
+					for(PersonDetail personss : personList) {
+						System.out.println("id: " + personss.getP_id());
+						System.out.println("Last Name: " + lastname_1);
+						System.out.println("First Name: " + fname_1);
+						System.out.println("Age: " + xx1);
+						System.out.println();
+					}
+				System.out.println();
+				System.out.println("---System closed---");
+				System.exit(0);
+
+			}else {
+
+				sb =new StringBuilder (p.getLastname());
+				String lastname_ = "" + sb.reverse();
+				sb =new StringBuilder (p.getFirstname());
+				String fname_ = "" + sb.reverse();
+				sb =new StringBuilder (p.getMiddlename());
+				String mname_ = "" + sb.reverse();
+				String number_ = String.valueOf(p.getAge() );
+
+				String xx = "";
+				for(int i = number_.length() - 1; i >= 0; i--) {
+					xx = xx + number_.charAt(i);
+				}
+				System.out.println("Reversing details....");
+				Thread.sleep(2000);
+				System.out.println();
+				List<PersonDetail> personList = cr.list();
+
+				for(PersonDetail personss : personList) {
+					System.out.println("id: " + personss.getP_id());
+					System.out.println("Last Name: " + lastname_);
+					System.out.println("First Name: " + fname_);
+					System.out.println("Middle Name: " + mname_);
+					System.out.println("Age: " + xx);
+					System.out.println();
+				}
+				System.out.println("---System closed---");
+				System.exit(0);
+			}
+		} catch (Exception ex) {
+			System.out.println("---NO DATA FOUND---");
+			System.exit(0);
+			ex.printStackTrace();
+		} finally {
+			session1.close();
+		}
+		break;
+
+	case 3: 	
+
+		System.out.println("Please enter the following details: ");
+		System.out.print("Id: ");
+		int id_ = input.nextInt();
+		System.out.print("Lastname: ");
+		String ln = input.next();
+		System.out.print("Firstname: ");
+		String ff = input.next();
+		System.out.print("Middlename: ");
+		String mm = input.next();
+		System.out.print("Age: ");
+		int aa = input.nextInt();
+		System.out.print("Barangay: ");
+		String ba = input.next();
+
+		int fib[] = new int[aa]; 
+		fib[0] = 0;
+		fib[1] = 1;
+
+		for (int i = 2; i < aa; i++) {
+			fib[i] = fib[i - 1] + fib[i - 2];
+		}
+
+		System.out.println("fibonacci sequence: ");
+		for (int i = 0; i < aa; i++) { //display user's age
+			System.out.println(fib[i]);
+		}
+
+		int results[] = new int[2];
+		int even = 0;
+		int odd = 0;
+
+		for(int h = 0; h < fib.length;h ++) {
+
+			if(fib[h] % 2 == 0) {
+				even +=1;
+
+			}else {
+				odd += 1;
+			}
+		}
+
+		results[0] = even;
+		results[1] = odd;
+		System.out.println("-------------------------");
+		System.out.println("# of even nos.: "+even);
+		System.out.println("# of odd nos.: "+odd );
+
+		if(even >10) {
+			Session session2 = dbutil.getSession();
+			Transaction tx2 = null;
+
+			try {
+
+				Query query = session2.createSQLQuery("select * from personDetail where p_Id = :Id");
+				query.setParameter("Id",id_);
+				query.setResultTransformer(Transformers.aliasToBean(PersonDetail.class));
+
+				p = (PersonDetail) query.uniqueResult();
+
+				tx = session2.beginTransaction();
+
+
+				p.setLastname(ln);
+				p.setFirstname(ff);
+				p.setMiddlename(mm);
+				p.setAge(aa);
+				session2.update(p);
+				tx.commit();
+
+			} catch (Exception ex) {
+				if (tx2 != null) {
+					tx2.rollback();
+				}
+				System.out.println("NO EXISTING DATA FOUND");
+				System.exit(0);
+				ex.printStackTrace();
+			} finally {
+				session2.close();
+			}		
+			System.out.println("---Details updated, system closed---");
+			System.exit(0);
+		}
+		else if(odd < 10) {
+			Session session4 = dbutil.getSession();
+			Transaction tx4 = null;
+			try {
+
+				Query query = session4.createSQLQuery("select * from personDetail where p_Id = :Id");
+				query.setParameter("Id", id_);
+				query.setResultTransformer(Transformers.aliasToBean(PersonDetail.class));
+
+				PersonDetail INfoResult = (PersonDetail) query.uniqueResult();
+
+				tx4 = session4.beginTransaction();
+				session4.delete(INfoResult);
+
+				tx4.commit();
+
+			} catch (Exception ex) {
+				if (tx4!= null) {
+					tx4.rollback();
+				}
+				System.out.println("NO Data FOUND TO BE DELETED");
+
+				ex.printStackTrace();
+			} finally {
+				session4.close();
+			}		
+			System.out.println("---Detail/s deleted, system closed---");
+			System.exit(0);
+		}else if(!(even >= 10)) {
+			Session session11 = dbutil.getSession();
+			Transaction tx11 = null;
+			try {
+
+				Query query = session11.createSQLQuery("select * from personDetail where p_Id = :Id");
+				query.setParameter("Id", id_);
+				query.setResultTransformer(Transformers.aliasToBean(PersonDetail.class));
+
+				p = (PersonDetail) query.uniqueResult();
+
+				tx11 = session11.beginTransaction();
+				session11.delete(p);
+
+				tx11.commit();
+
+			} catch (Exception ex) {
+				if (tx11!= null) {
+					tx11.rollback();
+				}
+				System.out.println("NO Data FOUND TO BE DELETED");
+
+				ex.printStackTrace();
+			} finally {
+				session11.close();
+			}		
+			System.out.println("---Details deleted, system closed---");
+			System.exit(0);
+		}
+		else if(odd >= 10) {
+
+			Session session00 = dbutil.getSession();
+			Transaction tx00 = null;
+
+			try {
+
+				Query query = session00.createSQLQuery("select * from personDetail where p_Id = :Id");
+				query.setParameter("Id",id_);
+				query.setResultTransformer(Transformers.aliasToBean(PersonDetail.class));
+
+				p = (PersonDetail) query.uniqueResult();
+
+
+				tx00 = session00.beginTransaction();
+
+				p.setLastname(ln);
+				p.setFirstname(ff);
+				p.setMiddlename(mm);
+				p.setAge(aa);
+
+				session00.update(p);
+				tx00.commit();
+
+			} catch (Exception ex) {
+				if (tx00 != null) {
+					tx00.rollback();
+				}
+				System.out.println("NO DATA FOUND");
+				System.exit(0);
+				ex.printStackTrace();
+			} finally {
+				session00.close();
+			}		
+			System.out.println("---Details updated, system closed---");
+			System.exit(0);
+		}
+		break;
+
+	default: 
+		System.out.println("Input invalid please try again....");
+		main(args);
+	}
+}
+}

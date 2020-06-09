@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jun 7, 2020, 9:03:16 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+ <class name="set.PersonDetail" table="PERSONDETAIL">
+  <id access="field" name="p_id" type="int">
+   <column name="P_ID"/>
+   <generator class="identity"/>
+  </id>
+  <property name="lastname" type="java.lang.String">
+   <column name="LASTNAME"/>
+  </property>
+  <property name="firstname" type="java.lang.String">
+   <column name="FIRSTNAME"/>
+  </property>
+  <property name="middlename" type="java.lang.String">
+   <column name="MIDDLENAME"/>
+  </property>
+  <property name="age" type="int">
+   <column name="AGE"/>
+  </property>
+  <set name="barangays" cascade="all" table="BARANGAY">
+   <key>
+    <column name="P_ID"/>
+   </key>
+   <one-to-many class="set.barangay"/>
+  </set>
+ </class>
+</hibernate-mapping>

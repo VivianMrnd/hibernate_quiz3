@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jun 7, 2020, 5:54:36 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+ <class name="list.barangay" table="BARANGAY">
+  <id name="b_id" type="int">
+   <column name="B_ID"/>
+   <generator class="identity"/>
+  </id>
+  <property generated="never" lazy="false" name="bname" type="java.lang.String">
+   <column name="BNAME"/>
+  </property>
+ </class>
+</hibernate-mapping>
